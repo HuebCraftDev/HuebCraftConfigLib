@@ -15,11 +15,13 @@ abstract class ConfigObject(val key: String = "") {
     private val objectsList: MutableList<ConfigObject> = mutableListOf()
 
 
+    @Suppress("unused")
     protected inline fun <reified T : Any> option(default: T, key: String): ConfigOption<T> {
         val kClass = T::class
         return ConfigOption(kClass, default, key)
     }
 
+    @Suppress("unused")
     protected inline fun <reified T : Any, reified U : MutableCollection<T>> option(
         default: U, key: String
     ): CollectionConfigOption<T, U> {
@@ -72,15 +74,15 @@ abstract class ConfigObject(val key: String = "") {
         }
     }
 
-    fun getObjects(): List<ConfigObject> {
+    internal fun getObjects(): List<ConfigObject> {
         return objectsList.toImmutable()
     }
 
-    fun getOptions(): List<ConfigOption<*>> {
+    internal fun getOptions(): List<ConfigOption<*>> {
         return optionsList.toImmutable()
     }
 
-    operator fun get(key: String): Any? {
+    internal operator fun get(key: String): Any? {
         return get(key.splitToSequence("."))
     }
 
@@ -93,7 +95,7 @@ abstract class ConfigObject(val key: String = "") {
         }
     }
 
-    operator fun set(key: String, value: Any) {
+    internal operator fun set(key: String, value: Any) {
         set(key.splitToSequence("."), value)
     }
 
