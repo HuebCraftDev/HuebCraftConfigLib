@@ -1,0 +1,28 @@
+{
+    "schemaVersion": 1,
+    "id": "huebcraftconfiglib",
+    "version": "${version}",
+    "name": "HuebCraftConfigLib",
+    "description": "",
+    "authors": [],
+    "contact": {},
+    "license": "MIT",
+    "icon": "assets/huebcraftconfiglib/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "preLaunch": [
+            {
+                "adapter": "kotlin",
+                "value": "de.huebcraft.configlib.Main"
+            }
+        ]
+    },
+    "mixins": [
+        "huebcraftconfiglib.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.13.3",
+        "fabric": "*",
+        "minecraft": "1.18.1"
+    }
+}
