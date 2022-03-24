@@ -42,7 +42,7 @@ abstract class ConfigObject(val key: String = "") {
             }
         }
 
-        Main.LOGGER.info("$kClass contains: {}", kClass.declaredMemberProperties)
+        Main.LOGGER.debug("$kClass contains: {}", kClass.declaredMemberProperties)
 
         for (property in kClass.declaredMemberProperties) {
             property.isAccessible = true

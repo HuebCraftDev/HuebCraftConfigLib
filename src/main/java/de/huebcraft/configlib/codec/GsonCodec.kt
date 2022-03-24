@@ -44,10 +44,10 @@ class GsonCodec : ConfigCodec {
     private fun encodeObject(configObj: ConfigObject): JsonObject {
         val obj = JsonObject()
 
-        Main.LOGGER.info(configObj.optionsMap.values.toString())
+        Main.LOGGER.debug(configObj.optionsMap.values.toString())
 
         for (option in configObj.getOptions().sortedBy { it.getKClass().superclasses.contains(ConfigObject::class) }) {
-            Main.LOGGER.info("Encoding option ${option.key} of object $configObj")
+            Main.LOGGER.debug("Encoding option ${option.key} of object $configObj")
             if (option.wasLoadedFromFile) {
                 val optionElement = encodeOption(option)
 
@@ -56,7 +56,7 @@ class GsonCodec : ConfigCodec {
         }
 
         for (subobj in configObj.getObjects()) {
-            Main.LOGGER.info("Encoding subobject ${subobj.key} of object $configObj")
+            Main.LOGGER.debug("Encoding subobject ${subobj.key} of object $configObj")
             val subobjObj = encodeObject(subobj)
 
             obj.add(subobj.key, subobjObj)
@@ -69,16 +69,16 @@ class GsonCodec : ConfigCodec {
         val any = option.get()
 
         if (option is CollectionConfigOption<*, *> && any is Collection<*>) {
-            Main.LOGGER.info("Option is Collection<*>")
+            Main.LOGGER.debug("Option is Collection<*>")
             val array = JsonArray()
 
             if (option.getElementKClass().superclasses.contains(ConfigObject::class)) {
-                Main.LOGGER.info("Option is Collection<ConfigObject>")
+                Main.LOGGER.debug("Option is Collection<ConfigObject>")
                 any.forEach {
                     array.add(encodeObject(it as ConfigObject))
                 }
             } else {
-                Main.LOGGER.info("Option is Collection<Any>")
+                Main.LOGGER.debug("Option is Collection<Any>")
                 any.forEach {
                     array.add(gson.toJsonTree(it, option.getElementKClass().java))
                 }
@@ -87,11 +87,11 @@ class GsonCodec : ConfigCodec {
         }
 
         if (option.getKClass().superclasses.contains(ConfigObject::class) && any is ConfigObject) {
-            Main.LOGGER.info("Option is ConfigObject")
+            Main.LOGGER.debug("Option is ConfigObject")
             return encodeObject(any)
         }
 
-        Main.LOGGER.info(
+        Main.LOGGER.debug(
             "Option ${option.key} ($any) encoded to: ${
                 gson.toJson(
                     gson.toJsonTree(

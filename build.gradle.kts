@@ -1,6 +1,6 @@
 plugins {
-    id("fabric-loom") version("0.12.5")
-    kotlin("jvm") version("1.6.10")
+    id("fabric-loom") version ("0.12.5")
+    kotlin("jvm") version ("1.6.10")
     id("maven-publish")
 }
 
@@ -47,7 +47,7 @@ tasks {
 
     withType(Jar::class) {
         from("LICENSE") {
-            rename {"${it}_${project.base.archivesName}"}
+            rename { "${it}_${project.base.archivesName}" }
         }
     }
 }
@@ -71,5 +71,19 @@ publishing {
 
     repositories {
         mavenLocal()
+        maven {
+            name = "HuebCraft"
+            url = uri("http://85.214.197.24:9000/")
+            isAllowInsecureProtocol = true
+            credentials {
+                val mavenUser: String by project
+                val mavenPassword: String by project
+                username = mavenUser
+                password = mavenPassword
+            }
+            authentication {
+                create<BasicAuthentication>("huebcraftPublish")
+            }
+        }
     }
 }
