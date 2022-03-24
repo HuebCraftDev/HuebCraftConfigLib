@@ -17,8 +17,3 @@ fun JsonPrimitive.getValue(): Any? {
         null
     }
 }
-
-val JsonPrimitive.asAny: Any?
-    get() {
-        return getValue()
-    }
