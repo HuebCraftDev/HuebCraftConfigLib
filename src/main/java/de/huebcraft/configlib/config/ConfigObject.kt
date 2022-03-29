@@ -7,6 +7,12 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.superclasses
 import kotlin.reflect.jvm.isAccessible
 
+/**
+ * Represents a JSON object.
+ * Can be used in collection [ConfigOption]s or as
+ * a kotlin singleton object inside another [ConfigObject].
+ * @param key JSON key of the object in its parent [ConfigObject].
+ */
 abstract class ConfigObject(val key: String = "") {
     @PublishedApi
     internal val optionsMap: HashMap<String, ConfigOption<*>> = HashMap()
