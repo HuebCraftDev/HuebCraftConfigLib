@@ -3,6 +3,9 @@ package de.huebcraft.configlib.config
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
+/**
+ * Specialization of [ConfigOption] for collections.
+ */
 open class CollectionConfigOption<E : Any, U : MutableCollection<E>>(
     private val innerType: KClass<E>, collectionType: KClass<U>, value: U, key: String
 ) : ConfigOption<U>(collectionType, value, key) {

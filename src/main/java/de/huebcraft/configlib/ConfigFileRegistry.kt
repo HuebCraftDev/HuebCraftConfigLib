@@ -4,12 +4,20 @@ import de.huebcraft.configlib.codec.ConfigCodec
 import de.huebcraft.configlib.config.ConfigFile
 import net.fabricmc.loader.api.FabricLoader
 import java.io.File
-import java.util.IllegalFormatException
+import java.util.*
 
 object ConfigFileRegistry {
     private val configs: MutableMap<String, ConfigFile> = mutableMapOf()
 
-    fun getConfig(id: String) : ConfigFile? {
+    /**
+     * May be used to manually retrieve a config file.
+     * Should not be used in general, as config files are automatically loaded
+     * into the singletons of their [ConfigFile] implementations.
+     *
+     * @param id Id of the config file (&lt;modid&gt;:&lt;name including extension&gt;)
+     */
+    @Suppress("unused")
+    fun getConfig(id: String): ConfigFile? {
         return configs[id]
     }
 

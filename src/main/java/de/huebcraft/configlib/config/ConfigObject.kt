@@ -1,7 +1,7 @@
 package de.huebcraft.configlib.config
 
 import de.huebcraft.configlib.Main
-import de.huebcraft.configlib.toImmutable
+import de.huebcraft.configlib.util.toImmutable
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.superclasses
@@ -15,12 +15,26 @@ abstract class ConfigObject(val key: String = "") {
     private val objectsList: MutableList<ConfigObject> = mutableListOf()
 
 
+    /**
+     * Adds a new plain [ConfigOption] to the [ConfigObject].
+     * @param default Default value, will be used if not specified in the config file or config file is not present.
+     * @param key JSON key of the [ConfigOption] in the parent object.
+     */
     @Suppress("unused")
     protected inline fun <reified T : Any> option(default: T, key: String): ConfigOption<T> {
         val kClass = T::class
         return ConfigOption(kClass, default, key)
     }
 
+    /**
+     * Adds a new [CollectionConfigOption] to the [ConfigObject].
+     *
+     * Special case: If the collection element type is a [ConfigObject],
+     * these objects will be initialized and stored correctly.
+     *
+     * @param default Default value, will be used if not specified in the config file or config file is not present.
+     * @param key JSON key of the [CollectionConfigOption] in the parent object.
+     */
     @Suppress("unused")
     protected inline fun <reified T : Any, reified U : MutableCollection<T>> option(
         default: U, key: String

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 
 object Main : PreLaunchEntrypoint {
     const val MOD_ID = "huebcraftconfiglib"
-    val LOGGER = LoggerFactory.getLogger(Main::class.java)
+    val LOGGER = LoggerFactory.getLogger(Main::class.java)!!
 
     @Suppress("unused")
     override fun onPreLaunch() {

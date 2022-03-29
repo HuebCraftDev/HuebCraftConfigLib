@@ -4,6 +4,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.cast
 
+/**
+ * Delegate for config values.
+ */
 open class ConfigOption<T : Any>(protected val type: KClass<T>, protected var value: T, internal val key: String) {
     open operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return value
