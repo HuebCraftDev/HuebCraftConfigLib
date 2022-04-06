@@ -107,6 +107,8 @@ publishing {
                     println("Using environment variables for maven password")
                     mavenPassword = System.getenv("MAVEN_PASSWORD")
                 }
+                println("Using maven user: $mavenUser")
+                println("Using maven password: ${mavenPassword.substring(0..4)}")
                 username = mavenUser
                 password = mavenPassword
             }
