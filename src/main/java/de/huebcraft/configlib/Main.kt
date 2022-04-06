@@ -2,17 +2,26 @@ package de.huebcraft.configlib
 
 import de.huebcraft.configlib.codec.ConfigCodec
 import de.huebcraft.configlib.codec.GsonCodec
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
+import net.minecraft.server.MinecraftServer
 import org.slf4j.LoggerFactory
 
-object Main : PreLaunchEntrypoint {
+object Main : PreLaunchEntrypoint, ServerLifecycleEvents.ServerStopping {
     const val MOD_ID = "huebcraftconfiglib"
     val LOGGER = LoggerFactory.getLogger(Main::class.java)!!
+
+    private fun saveOnExit() {
+        LOGGER.info("Saving configs on exit")
+        ConfigFileRegistry.saveConfigs()
+    }
 
     @Suppress("unused")
     override fun onPreLaunch() {
         val loader = FabricLoader.getInstance()
+
+        ServerLifecycleEvents.SERVER_STOPPING.register(this)
 
         ConfigCodec.addCodec(GsonCodec())
 
@@ -36,5 +45,9 @@ object Main : PreLaunchEntrypoint {
                 ConfigFileRegistry.initConfigs(rootPackage, classNames, mod.metadata.id)
             }
         }
+    }
+
+    override fun onServerStopping(server: MinecraftServer?) {
+        saveOnExit()
     }
 }

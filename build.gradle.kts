@@ -25,6 +25,11 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${fabricKotlinVersion}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("org.mockito:mockito-core:4.4.0")
+    testImplementation("org.mockito:mockito-inline:4.4.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 }
 
 val targetJavaVersion = 17
@@ -50,6 +55,10 @@ tasks {
             rename { "${it}_${project.base.archivesName}" }
         }
     }
+
+    withType(Test::class) {
+        useJUnitPlatform()
+    }
 }
 
 java {
@@ -60,6 +69,9 @@ java {
 
     withSourcesJar()
     withJavadocJar()
+}
+repositories {
+    mavenCentral()
 }
 
 publishing {
@@ -77,8 +89,24 @@ publishing {
             url = uri("http://85.214.197.24:9000/")
             isAllowInsecureProtocol = true
             credentials {
-                val mavenUser: String by project
-                val mavenPassword: String by project
+                var mavenUser = ""
+                var mavenPassword = ""
+                if (project.hasProperty("mavenUser")) {
+                    println("Using property for maven user")
+                    mavenUser = project.property("mavenUser").toString()
+                }
+                if (project.hasProperty("mavenPassword")) {
+                    println("Using property for maven password")
+                    mavenPassword = project.property("mavenPassword").toString()
+                }
+                if (mavenUser.isBlank()) {
+                    println("Using environment variables for maven user")
+                    mavenUser = System.getenv("MAVEN_USER")
+                }
+                if (mavenPassword.isBlank()) {
+                    println("Using environment variables for maven password")
+                    mavenPassword = System.getenv("MAVEN_PASSWORD")
+                }
                 username = mavenUser
                 password = mavenPassword
             }
