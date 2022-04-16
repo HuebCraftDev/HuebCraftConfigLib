@@ -18,7 +18,7 @@ Based on [RedstoneParadox's ParadoxConfig](https://github.com/RedstoneParadox/Pa
 Add it to your mod's gradle buildscript:
 
 ```kotlin
-modImplementation("de.huebcraft:configlib:1.0.2-SNAPSHOT")
+modImplementation("de.huebcraft:configlib:1.0.3-SNAPSHOT")
 ```
 
 Implement the ``ConfigFile`` class:
