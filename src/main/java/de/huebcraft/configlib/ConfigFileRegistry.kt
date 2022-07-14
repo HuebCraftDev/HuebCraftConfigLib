@@ -24,6 +24,7 @@ object ConfigFileRegistry {
     internal fun initConfigs(rootPackage: String, configNames: Collection<String>, modid: String) {
         configNames.forEach {
             val className = "${rootPackage}.$it"
+            Main.LOGGER.info("Loading config file $className")
 
             when (val config = Class.forName(className).kotlin.objectInstance) {
                 is ConfigFile -> {
