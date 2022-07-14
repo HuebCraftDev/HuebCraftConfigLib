@@ -86,7 +86,7 @@ publishing {
         mavenLocal()
         maven {
             name = "HuebCraft"
-            url = uri("http://85.214.197.24:9000/")
+            url = uri("https://repo.huebcraft.net")
             isAllowInsecureProtocol = true
             credentials {
                 var mavenUser = ""
