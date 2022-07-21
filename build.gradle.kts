@@ -34,7 +34,8 @@ dependencies {
 
 val targetJavaVersion = 17
 tasks {
-    withType(ProcessResources::class) {
+    @Suppress("UnstableApiUsage")
+    withType<ProcessResources> {
         inputs.property("version", project.version)
         filteringCharset = "UTF-8"
 
@@ -43,20 +44,20 @@ tasks {
         }
     }
 
-    withType(JavaCompile::class) {
+    withType<JavaCompile> {
         options.encoding = "UTF-8"
         if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
             options.release.set(targetJavaVersion)
         }
     }
 
-    withType(Jar::class) {
+    withType<Jar> {
         from("LICENSE") {
             rename { "${it}_${project.base.archivesName}" }
         }
     }
 
-    withType(Test::class) {
+    withType<Test> {
         useJUnitPlatform()
     }
 }
@@ -87,7 +88,6 @@ publishing {
         maven {
             name = "HuebCraft"
             url = uri("https://repo.huebcraft.net/releases")
-            isAllowInsecureProtocol = true
             credentials {
                 var mavenUser = ""
                 var mavenPassword = ""
@@ -112,6 +112,35 @@ publishing {
             }
             authentication {
                 create<BasicAuthentication>("huebcraftPublish")
+            }
+        }
+        maven {
+            name = "HuebCraftPublic"
+            url = uri("https://repo.huebcraft.net/public-releases")
+            credentials {
+                var mavenUser = ""
+                var mavenPassword = ""
+                if (project.hasProperty("mavenUser")) {
+                    println("Using property for maven user")
+                    mavenUser = project.property("mavenUser").toString()
+                }
+                if (project.hasProperty("mavenPassword")) {
+                    println("Using property for maven password")
+                    mavenPassword = project.property("mavenPassword").toString()
+                }
+                if (mavenUser.isBlank()) {
+                    println("Using environment variables for maven user")
+                    mavenUser = System.getenv("MAVEN_USER")
+                }
+                if (mavenPassword.isBlank()) {
+                    println("Using environment variables for maven password")
+                    mavenPassword = System.getenv("MAVEN_PASSWORD")
+                }
+                username = mavenUser
+                password = mavenPassword
+            }
+            authentication {
+                create<BasicAuthentication>("huebcraftPublishPublic")
             }
         }
     }
