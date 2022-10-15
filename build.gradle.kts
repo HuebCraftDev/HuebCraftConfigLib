@@ -1,10 +1,11 @@
 plugins {
-    id("fabric-loom") version ("0.12.5")
-    kotlin("jvm") version ("1.7.0")
+    id("fabric-loom") version ("0.13-SNAPSHOT")
+    kotlin("jvm") version ("1.7.10")
     id("maven-publish")
 }
 
-val modVersion: String by project
+val modVersion =
+    System.getenv("CI_COMMIT_TAG") ?: System.getenv("CI_COMMIT_SHORT_SHA")?.let { "$it-dev" } ?: "0.0.0-SNAPSHOT"
 val minecraftVersion: String by project
 val loaderVersion: String by project
 val fabricVersion: String by project
@@ -26,10 +27,10 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${fabricKotlinVersion}")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testImplementation("org.mockito:mockito-core:4.4.0")
-    testImplementation("org.mockito:mockito-inline:4.4.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("org.mockito:mockito-core:4.8.0")
+    testImplementation("org.mockito:mockito-inline:4.8.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 }
 
 val targetJavaVersion = 17
@@ -40,7 +41,10 @@ tasks {
         filteringCharset = "UTF-8"
 
         filesMatching("fabric.mod.json") {
-            expand("version" to project.version)
+            expand(
+                "version" to project.version,
+                "fabricKotlinVersion" to fabricKotlinVersion,
+            )
         }
     }
 
@@ -53,7 +57,7 @@ tasks {
 
     withType<Jar> {
         from("LICENSE") {
-            rename { "${it}_${project.base.archivesName}" }
+            rename { "${it}_$archivesBaseName" }
         }
     }
 
@@ -77,71 +81,30 @@ repositories {
 
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("mavenJava") {
+            version = project.version as String
+
             from(components["java"])
-            artifactId = project.base.archivesName.get()
         }
     }
 
     repositories {
-        mavenLocal()
-        maven {
-            name = "HuebCraft"
-            url = uri("https://repo.huebcraft.net/releases")
-            credentials {
-                var mavenUser = ""
-                var mavenPassword = ""
-                if (project.hasProperty("mavenUser")) {
-                    println("Using property for maven user")
-                    mavenUser = project.property("mavenUser").toString()
+        if (System.getenv("CI_JOB_TOKEN") != null) {
+            maven {
+                name = "GitLab"
+                val projectId = System.getenv("CI_PROJECT_ID")
+                val apiV4 = System.getenv("CI_API_V4_URL")
+                url = uri("$apiV4/projects/$projectId/packages/maven")
+                authentication {
+                    create("token", HttpHeaderAuthentication::class.java) {
+                        credentials(HttpHeaderCredentials::class.java) {
+                            name = "Job-Token"
+                            value = System.getenv("CI_JOB_TOKEN")
+                        }
+                    }
                 }
-                if (project.hasProperty("mavenPassword")) {
-                    println("Using property for maven password")
-                    mavenPassword = project.property("mavenPassword").toString()
-                }
-                if (mavenUser.isBlank()) {
-                    println("Using environment variables for maven user")
-                    mavenUser = System.getenv("MAVEN_USER")
-                }
-                if (mavenPassword.isBlank()) {
-                    println("Using environment variables for maven password")
-                    mavenPassword = System.getenv("MAVEN_PASSWORD")
-                }
-                username = mavenUser
-                password = mavenPassword
-            }
-            authentication {
-                create<BasicAuthentication>("huebcraftPublish")
-            }
-        }
-        maven {
-            name = "HuebCraftPublic"
-            url = uri("https://repo.huebcraft.net/public-releases")
-            credentials {
-                var mavenUser = ""
-                var mavenPassword = ""
-                if (project.hasProperty("mavenUser")) {
-                    println("Using property for maven user")
-                    mavenUser = project.property("mavenUser").toString()
-                }
-                if (project.hasProperty("mavenPassword")) {
-                    println("Using property for maven password")
-                    mavenPassword = project.property("mavenPassword").toString()
-                }
-                if (mavenUser.isBlank()) {
-                    println("Using environment variables for maven user")
-                    mavenUser = System.getenv("MAVEN_USER")
-                }
-                if (mavenPassword.isBlank()) {
-                    println("Using environment variables for maven password")
-                    mavenPassword = System.getenv("MAVEN_PASSWORD")
-                }
-                username = mavenUser
-                password = mavenPassword
-            }
-            authentication {
-                create<BasicAuthentication>("huebcraftPublishPublic")
             }
         }
     }
 }
+
