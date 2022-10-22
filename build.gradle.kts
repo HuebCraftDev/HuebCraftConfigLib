@@ -1,7 +1,7 @@
 plugins {
-    id("fabric-loom") version ("0.13-SNAPSHOT")
-    kotlin("jvm") version ("1.7.10")
-    id("maven-publish")
+    `maven-publish`
+    id("fabric-loom") version ("1.0-SNAPSHOT")
+    kotlin("jvm") version ("1.7.20")
 }
 
 val modVersion =
@@ -22,6 +22,9 @@ dependencies {
     minecraft("com.mojang:minecraft:${minecraftVersion}")
     mappings("net.fabricmc:yarn:${yarnMappings}:v2")
     modImplementation("net.fabricmc:fabric-loader:${loaderVersion}")
+
+    include("org.reflections:reflections:0.10.2")
+    implementation("org.reflections:reflections:0.10.2")
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
@@ -83,6 +86,7 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             version = project.version as String
+            artifactId = archivesBaseName
 
             from(components["java"])
         }

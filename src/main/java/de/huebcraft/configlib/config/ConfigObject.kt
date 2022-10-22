@@ -1,5 +1,6 @@
 package de.huebcraft.configlib.config
 
+import de.huebcraft.configlib.ConfigFileRegistry
 import de.huebcraft.configlib.Main
 import de.huebcraft.configlib.util.toImmutable
 import kotlin.reflect.KProperty1
@@ -14,6 +15,25 @@ import kotlin.reflect.jvm.isAccessible
  * @param key JSON key of the object in its parent [ConfigObject].
  */
 abstract class ConfigObject(val key: String = "") {
+    private var topInternal: ConfigObject? = null
+
+    val top
+        get() = if (this.javaClass.annotations.any { it is ConfigFile }) this else topInternal!!
+
+    internal constructor(top: ConfigObject, key: String = "") : this(key) {
+        this.topInternal = top
+    }
+
+    internal val fileName by lazy {
+        val fileAnnotation = this.javaClass.annotations.firstOrNull { it is ConfigFile }
+        (fileAnnotation as ConfigFile).fileName
+    }
+
+    internal val modId by lazy {
+        val fileAnnotation = this.javaClass.annotations.firstOrNull { it is ConfigFile }
+        (fileAnnotation as ConfigFile).modId
+    }
+
     @PublishedApi
     internal val optionsMap: HashMap<String, ConfigOption<*>> = HashMap()
     private val objectsMap: HashMap<String, ConfigObject> = HashMap()
@@ -29,7 +49,7 @@ abstract class ConfigObject(val key: String = "") {
     @Suppress("unused")
     protected inline fun <reified T : Any> option(default: T, key: String): ConfigOption<T> {
         val kClass = T::class
-        return ConfigOption(kClass, default, key)
+        return ConfigOption(kClass, default, key, top)
     }
 
     /**
@@ -37,6 +57,9 @@ abstract class ConfigObject(val key: String = "") {
      *
      * Special case: If the collection element type is a [ConfigObject],
      * these objects will be initialized and stored correctly.
+     *
+     * **Warning:** There are no warranties for the type of the returned collection from this field.
+     * It is usually an instance of [ArrayList], but it may also be of any other collection that allows duplicates.
      *
      * @param default Default value, will be used if not specified in the config file or config file is not present.
      * @param key JSON key of the [CollectionConfigOption] in the parent object.
@@ -46,7 +69,7 @@ abstract class ConfigObject(val key: String = "") {
         default: U, key: String
     ): CollectionConfigOption<T, U> {
         val kClass = T::class
-        return CollectionConfigOption(kClass, U::class, default, key)
+        return CollectionConfigOption(kClass, default, key, top)
     }
 
     internal fun init() {
@@ -127,4 +150,6 @@ abstract class ConfigObject(val key: String = "") {
             objectsMap[first]?.set(key.drop(1), value)
         }
     }
+
+    internal fun schedulePersist() = ConfigFileRegistry.scheduleSave(this)
 }

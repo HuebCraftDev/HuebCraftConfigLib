@@ -11,6 +11,9 @@
     "environment": "*",
     "entrypoints": {
         "preLaunch": [
+            "de.huebcraft.configlib.Main"
+        ],
+        "main": [
             {
                 "adapter": "kotlin",
                 "value": "de.huebcraft.configlib.Main"

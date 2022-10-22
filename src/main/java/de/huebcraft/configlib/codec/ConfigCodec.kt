@@ -1,11 +1,10 @@
 package de.huebcraft.configlib.codec
 
-import de.huebcraft.configlib.config.ConfigFile
 import de.huebcraft.configlib.config.ConfigObject
 import de.huebcraft.configlib.config.ConfigOption
 
 /**
- * A codec is responsible for encoding and decoding a [ConfigFile] to and from a specific format.
+ * A codec is responsible for encoding and decoding a [ConfigObject] to and from a specific format.
  * It must be able to handle all types of [ConfigOption]s, including collections of [ConfigObject]s.
  */
 interface ConfigCodec {
@@ -16,22 +15,22 @@ interface ConfigCodec {
     val fileExtension: String
 
     /**
-     * Decodes [data] into the given instance of [ConfigFile].
+     * Decodes [data] into the given instance of [ConfigObject].
      *
      * @param data A valid JSON string to decode.
-     * @param configFile The [ConfigFile] to decode into, old values will be overwritten.
+     * @param configObject The [ConfigObject] to decode into, old values will be overwritten.
      *
-     * @return A reference to the passed [ConfigFile] instance to integrate the method better.
+     * @return A reference to the passed [ConfigObject] instance to integrate the method better.
      */
-    fun decode(data: String, configFile: ConfigFile): ConfigFile
+    fun decode(data: String, configObject: ConfigObject): ConfigObject
 
     /**
-     * Encodes the given [ConfigFile] into a valid, pretty-printed JSON string.
+     * Encodes the given [ConfigObject] into a valid, pretty-printed JSON string.
      *
-     * @param configFile [ConfigFile] to encode.
+     * @param configObject [ConfigObject] to encode.
      * @return A valid, pretty-printed JSON string.
      */
-    fun encode(configFile: ConfigFile): String
+    fun encode(configObject: ConfigObject): String
 
     companion object {
         internal val codecs: MutableMap<String, ConfigCodec> = mutableMapOf()

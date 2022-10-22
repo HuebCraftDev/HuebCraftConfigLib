@@ -5,7 +5,6 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import de.huebcraft.configlib.Main
 import de.huebcraft.configlib.config.CollectionConfigOption
-import de.huebcraft.configlib.config.ConfigFile
 import de.huebcraft.configlib.config.ConfigObject
 import de.huebcraft.configlib.config.ConfigOption
 import net.minecraft.util.Identifier
@@ -31,15 +30,13 @@ class GsonCodec : ConfigCodec {
         .create()
 
     @Throws(Exception::class)
-    override fun decode(data: String, configFile: ConfigFile): ConfigFile {
+    override fun decode(data: String, configObject: ConfigObject): ConfigObject {
         val json = gson.fromJson(data, JsonObject::class.java)
 
-        return decodeObject(json, configFile) as ConfigFile // Will return configFile
+        return decodeObject(json, configObject)
     }
 
-    override fun encode(configFile: ConfigFile): String {
-        return gson.toJson(encodeObject(configFile))
-    }
+    override fun encode(configObject: ConfigObject): String = gson.toJson(encodeObject(configObject))
 
     private fun encodeObject(configObj: ConfigObject): JsonObject {
         val obj = JsonObject()
@@ -62,7 +59,7 @@ class GsonCodec : ConfigCodec {
             obj.add(subobj.key, subobjObj)
         }
 
-        return obj;
+        return obj
     }
 
     private fun encodeOption(option: ConfigOption<*>): JsonElement {
