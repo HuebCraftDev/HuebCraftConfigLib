@@ -21,7 +21,7 @@ class SaveOnExitTest {
             Mockito.`when`(loaderMock.configDir).thenReturn(Path.of("."))
             it.`when`<FabricLoader>(FabricLoader::getInstance).thenReturn(loaderMock)
 
-            ConfigFileRegistry.initConfigs("de.huebcraft.configlib.config", listOf("TestConfig"), "test")
+            ConfigFileRegistry.initConfigs(listOf(TestConfig::class.java))
 
             assert(File("./test/test.json").exists())
             Assertions.assertEquals(TestConfig.test, "test")

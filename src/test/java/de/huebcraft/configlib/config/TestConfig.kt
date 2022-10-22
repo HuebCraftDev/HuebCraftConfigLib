@@ -1,5 +1,6 @@
 package de.huebcraft.configlib.config
 
-object TestConfig : ConfigFile("test.json") {
+@ConfigFile("test", "test.json")
+object TestConfig : ConfigObject() {
     var test: String by option("test", "test")
 }
