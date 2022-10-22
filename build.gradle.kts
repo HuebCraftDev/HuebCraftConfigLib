@@ -109,7 +109,11 @@ publishing {
                 }
             }
         }
-        if (System.getenv().containsKey("PUBLIC_REPO_USER") && System.getenv().containsKey("PUBLIC_REPO_TOKEN")) {
+        if (
+            System.getenv().containsKey("CI_COMMIT_TAG") &&
+            System.getenv().containsKey("PUBLIC_REPO_USER") &&
+            System.getenv().containsKey("PUBLIC_REPO_TOKEN")
+        ) {
             maven {
                 name = "Public"
                 url = uri("https://repo.huebcraft.net/public-releases")
