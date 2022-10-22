@@ -109,7 +109,6 @@ publishing {
                 }
             }
         }
-        System.getenv().keys.forEach(::println)
         if (
             System.getenv().containsKey("CI_COMMIT_TAG") &&
             System.getenv().containsKey("PUBLIC_REPO_USER") &&
@@ -121,6 +120,9 @@ publishing {
                 credentials {
                     username = System.getenv("PUBLIC_REPO_USER")
                     password = System.getenv("PUBLIC_REPO_TOKEN")
+                }
+                authentication {
+                    create<BasicAuthentication>("basic")
                 }
             }
         }
