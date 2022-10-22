@@ -109,6 +109,16 @@ publishing {
                 }
             }
         }
+        if (System.getenv().containsKey("PUBLIC_REPO_USER") && System.getenv().containsKey("PUBLIC_REPO_TOKEN")) {
+            maven {
+                name = "Public"
+                url = uri("https://repo.huebcraft.net/public-releases")
+                credentials {
+                    username = System.getenv("PUBLIC_REPO_USER")
+                    password = System.getenv("PUBLIC_REPO_TOKEN")
+                }
+            }
+        }
     }
 }
 

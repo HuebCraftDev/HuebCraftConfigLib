@@ -1,0 +1,34 @@
+image: gradle:7.5.1-jdk17
+
+stages:
+  - build
+  - publish
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  GIT_SUBMODULE_STRATEGY: recursive
+
+before_script:
+  - echo `pwd`
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - rm -f  .gradle/caches/modules-2/modules-2.lock
+  - rm -fr .gradle/caches/*/plugin-resolution/
+
+cache:
+  untracked: true
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+    - build
+
+build:
+  stage: build
+  script:
+    - gradle clean build
+  except:
+    - tags
+
+publish:
+  stage: publish
+  script:
+    - gradle publish
