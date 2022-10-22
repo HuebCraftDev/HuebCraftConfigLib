@@ -109,6 +109,7 @@ publishing {
                 }
             }
         }
+        System.getenv().keys.forEach(::println)
         if (
             System.getenv().containsKey("CI_COMMIT_TAG") &&
             System.getenv().containsKey("PUBLIC_REPO_USER") &&
