@@ -5,7 +5,6 @@ import de.huebcraft.configlib.codec.GsonCodec
 import de.huebcraft.configlib.config.*
 import kotlinx.coroutines.*
 import net.fabricmc.api.EnvType
-import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
@@ -15,15 +14,12 @@ import org.reflections.scanners.Scanners
 import org.reflections.util.ClasspathHelper
 import org.reflections.util.ConfigurationBuilder
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.io.path.*
 
-class Main : PreLaunchEntrypoint, ModInitializer, ServerLifecycleEvents.ServerStopping {
+class HuebCraftConfigLib : PreLaunchEntrypoint, ServerLifecycleEvents.ServerStopping {
     companion object {
-        const val MOD_ID = "huebcraftconfiglib"
-        val LOGGER = LoggerFactory.getLogger(Main::class.java)!!
+        val LOGGER = LoggerFactory.getLogger(HuebCraftConfigLib::class.java)!!
     }
 
     private fun saveOnExit() {
@@ -41,7 +37,7 @@ class Main : PreLaunchEntrypoint, ModInitializer, ServerLifecycleEvents.ServerSt
 
         LOGGER.info("Available extensions:")
         ConfigCodec.codecs.keys.forEach {
-            LOGGER.info(it)
+            LOGGER.info(" - $it")
         }
 
         for (entrypoint in loader.getEntrypoints("hconfigFormat", ConfigFormatInitializer::class.java)) {
@@ -50,14 +46,7 @@ class Main : PreLaunchEntrypoint, ModInitializer, ServerLifecycleEvents.ServerSt
 
         val reflections = Reflections(
             ConfigurationBuilder()
-                .setUrls(
-                    ClasspathHelper.forClassLoader(TestConfig::class.java.classLoader)
-                    /**FabricLoader.getInstance().allMods
-                    .filter { it.origin.kind != ModOrigin.Kind.NESTED }
-                    .flatMap { it.origin.paths }
-                    .map { it.toUri().toURL() }
-                    .toTypedArray()*/
-                )
+                .setUrls(ClasspathHelper.forClassLoader(HuebCraftConfigLib::class.java.classLoader))
                 .addScanners(Scanners.TypesAnnotated)
         )
 
@@ -101,30 +90,7 @@ class Main : PreLaunchEntrypoint, ModInitializer, ServerLifecycleEvents.ServerSt
 
             ConfigFileRegistry.initConfigs(configClasses.keys)
         }
-
-        /*if (mod.metadata.containsCustomValue(MOD_ID)) {
-            val obj = mod.metadata.getCustomValue(MOD_ID).asObject
-            val rootPackage = obj.get("package").asString
-            val classNames = obj.get("configs").asArray.map { it.asString }
-
-            if (mod.metadata.id == MOD_ID && !FabricLoader.getInstance().isDevelopmentEnvironment) continue
-
-            ConfigFileRegistry.initConfigs(rootPackage, classNames, mod.metadata.id)
-        }*/
     }
 
-    override fun onServerStopping(server: MinecraftServer?) {
-        saveOnExit()
-    }
-
-    override fun onInitialize() {
-        CoroutineScope(Dispatchers.Default).launch {
-            while (isActive) {
-                TestConfig.test = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                LOGGER.info(TestConfig.test2.spliterator().estimateSize().toString())
-                TestConfig.test2 = mutableSetOf(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                delay(5000)
-            }
-        }
-    }
+    override fun onServerStopping(server: MinecraftServer?) = saveOnExit()
 }

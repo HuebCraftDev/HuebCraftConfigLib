@@ -1,7 +1,7 @@
 package de.huebcraft.configlib.config
 
 import de.huebcraft.configlib.ConfigFileRegistry
-import de.huebcraft.configlib.Main
+import de.huebcraft.configlib.HuebCraftConfigLib
 import de.huebcraft.configlib.util.toImmutable
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
@@ -87,7 +87,7 @@ abstract class ConfigObject(val key: String = "") {
             }
         }
 
-        Main.LOGGER.debug("$kClass contains: {}", kClass.declaredMemberProperties)
+        HuebCraftConfigLib.LOGGER.debug("$kClass contains: {}", kClass.declaredMemberProperties)
 
         for (property in kClass.declaredMemberProperties) {
             property.isAccessible = true

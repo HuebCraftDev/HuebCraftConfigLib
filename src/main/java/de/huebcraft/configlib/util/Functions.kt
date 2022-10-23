@@ -1,7 +1,7 @@
 package de.huebcraft.configlib.util
 
 import com.google.gson.JsonPrimitive
-import de.huebcraft.configlib.Main
+import de.huebcraft.configlib.HuebCraftConfigLib
 
 fun <E, L : MutableList<E>> L.toImmutable(): List<E> {
     return List(size) { this[it] }
@@ -14,7 +14,7 @@ fun JsonPrimitive.getValue(): Any? {
         valueField.isAccessible = true
         valueField[this]
     } catch (e: Exception) {
-        Main.LOGGER.error("Exception while unwrapping GSON primitive", e)
+        HuebCraftConfigLib.LOGGER.error("Exception while unwrapping GSON primitive", e)
         null
     }
 }
