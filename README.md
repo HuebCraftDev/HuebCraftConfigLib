@@ -26,7 +26,7 @@ repositories {
 // ...
 dependencies {
     // ...
-    modImplementation("de.huebcraft:configlib:1.0.4-SNAPSHOT")
+    modImplementation("de.huebcraft.mod-libs:configlib:2.0.0-SNAPSHOT")
     // ...
 }
 ```
@@ -34,10 +34,13 @@ dependencies {
 Implement the ``ConfigFile`` class:
 
 ```kotlin
-import de.huebcraft.configlib.config.ConfigFile
 import de.huebcraft.configlib.config.ConfigObject
+import de.huebcraft.configlib.config.ConfigFile
+import de.huebcraft.configlib.config.ServerOnly
 
-object MyConfig : ConfigFile("myconfig.json") {
+@ServerOnly // If you want to load the config only on dedicated servers
+@ConfigFile("mymodid", "myconfig.json")
+object MyConfig : ConfigObject() {
     var myString by option("default", key = "myString") // Simple string option, default value is "default"
     var myArray by option(
         mutableListOf("Apple", "Banana"),
@@ -81,22 +84,5 @@ This will create a config file with the following structure:
             "stringInClass": "default in class"
         }
     ]
-}
-```
-
-Finally, add the following section to your mod's ``fabric.mod.json``:
-
-```json5
-{
-    // ...
-    "custom": {
-         // ...
-        "huebcraftconfiglib": {
-            "package": "<package of your config file class>",
-            "configs": [
-                // Config class names
-            ]
-        }
-    }
 }
 ```
