@@ -23,8 +23,8 @@ dependencies {
     mappings("net.fabricmc:yarn:${yarnMappings}:v2")
     modImplementation("net.fabricmc:fabric-loader:${loaderVersion}")
 
-    include("org.reflections:reflections:0.10.2")
-    implementation("org.reflections:reflections:0.10.2")
+    include(modImplementation("org.reflections:reflections:0.10.2")!!)
+    include(modImplementation("org.javassist:javassist:3.28.0-GA")!!)
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion}")
